@@ -14,6 +14,7 @@ No database required — all data is stored in memory using a `ConcurrentHashMap
 - [Sample Requests](#sample-requests)
 - [Running Tests](#running-tests)
 - [Error Handling](#error-handling)
+- [Git Branching and Version Control](#git-branching-and-version-control)
 
 ---
 
@@ -260,3 +261,69 @@ All errors follow a consistent JSON structure:
 | Mockito | (via Boot) | Mocking in unit tests |
 | AssertJ | (via Boot) | Fluent test assertions |
 | MockMvc | (via Boot) | HTTP layer testing |
+
+---
+
+## Git Branching and Version Control
+
+This project follows a simple, beginner-friendly Git branching strategy to keep development organised and the `main` branch stable at all times.
+
+### Branch Structure
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | The stable, production-ready branch. Only contains fully tested and reviewed code. |
+| `feature/<name>` | Short-lived branches created for each new feature or bug fix. |
+
+### Workflow
+
+1. **Start from `main`** — always branch off the latest `main` to ensure your feature starts from a clean, up-to-date baseline.
+
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
+
+2. **Create a feature branch** — use a descriptive name that reflects what the branch does.
+
+   ```bash
+   # Examples
+   git checkout -b feature/add-department-search
+   git checkout -b feature/delete-employee
+   git checkout -b fix/validation-error-message
+   ```
+
+3. **Develop and commit** — make small, focused commits with clear messages.
+
+   ```bash
+   git add .
+   git commit -m "feat: add GET /employees/department/{department} endpoint"
+   ```
+
+4. **Merge into `main`** — once development is complete and all tests pass, merge the feature branch back into `main`.
+
+   ```bash
+   git checkout main
+   git merge feature/add-department-search
+   git push origin main
+   ```
+
+5. **Delete the feature branch** — clean up after merging to keep the repository tidy.
+
+   ```bash
+   git branch -d feature/add-department-search
+   ```
+
+### Commit Message Convention
+
+Use the following prefixes to make the project history easy to read:
+
+| Prefix | When to use |
+|--------|-------------|
+| `feat:` | Adding a new feature |
+| `fix:` | Fixing a bug |
+| `test:` | Adding or updating tests |
+| `docs:` | Documentation changes only |
+| `refactor:` | Code restructuring without behaviour change |
+
+> **Tip:** Never commit directly to `main`. Always develop on a feature branch and merge once your changes are tested and reviewed.
