@@ -57,6 +57,25 @@ public class EmployeeService {
     }
 
     /**
+     * Retrieves all employees belonging to a given department.
+     *
+     * <p>The department name matching is case-insensitive, so "hr", "HR",
+     * and "Hr" all return the same results.</p>
+     *
+     * @param department The department name to filter by.
+     * @return A non-empty list of employees in that department.
+     * @throws com.example.employee.exception.DepartmentNotFoundException if no
+     *         employees belong to the given department.
+     */
+    public List<Employee> getEmployeesByDepartment(String department) {
+        List<Employee> employees = repository.findByDepartment(department);
+        if (employees.isEmpty()) {
+            throw new com.example.employee.exception.DepartmentNotFoundException(department);
+        }
+        return employees;
+    }
+
+    /**
      * Adds a new employee to the data store.
      *
      * @param employee The employee to add (ID is assigned automatically).

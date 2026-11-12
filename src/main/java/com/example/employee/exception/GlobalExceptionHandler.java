@@ -40,6 +40,25 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles the case where no employees exist for the requested department.
+     * Returns HTTP 404 Not Found.
+     */
+    @ExceptionHandler(DepartmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDepartmentNotFound(
+            DepartmentNotFoundException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse body = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    /**
      * Handles Bean Validation failures (e.g., blank fields, invalid email format).
      * Collects all field-level error messages and returns HTTP 400 Bad Request.
      */

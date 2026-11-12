@@ -1,5 +1,6 @@
 package com.example.employee.controller;
 
+import com.example.employee.exception.DepartmentNotFoundException;
 import com.example.employee.exception.EmployeeNotFoundException;
 import com.example.employee.model.Employee;
 import com.example.employee.service.EmployeeService;
@@ -202,5 +203,48 @@ class EmployeeControllerTest {
         mockMvc.perform(post("/employees")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    // =========================================================================
+    // GET /employees/department/{department}
+    // =========================================================================
+
+    @Test
+    @DisplayName("GET /employees/department/{department} should return 200 with matching employees")
+    void getEmployeesByDepartment_shouldReturn200WithMatchingEmployees() throws Exception {
+        // Both alice (Engineering) should be returned; bob (Marketing) should not
+        when(employeeService.getEmployeesByDepartment("Engineering"))
+                .thenReturn(List.of(alice));
+
+        mockMvc.perform(get("/employees/department/Engineering"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].firstName",  is("Alice")))
+                .andExpect(jsonPath("$[0].department", is("Engineering")));
+    }
+
+    @Test
+    @DisplayName("GET /employees/department/{department} should be case-insensitive")
+    void getEmployeesByDepartment_shouldBeCaseInsensitive() throws Exception {
+        // "engineering" (all lowercase) should still match "Engineering" employees
+        when(employeeService.getEmployeesByDepartment("engineering"))
+                .thenReturn(List.of(alice));
+
+        mockMvc.perform(get("/employees/department/engineering"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].firstName", is("Alice")));
+    }
+
+    @Test
+    @DisplayName("GET /employees/department/{department} should return 404 when department has no employees")
+    void getEmployeesByDepartment_shouldReturn404WhenNoneFound() throws Exception {
+        when(employeeService.getEmployeesByDepartment("Unknown"))
+                .thenThrow(new DepartmentNotFoundException("Unknown"));
+
+        mockMvc.perform(get("/employees/department/Unknown"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status",  is(404)))
+                .andExpect(jsonPath("$.message", containsString("Unknown")));
     }
 }

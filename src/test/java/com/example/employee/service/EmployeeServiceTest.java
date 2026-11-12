@@ -1,5 +1,6 @@
 package com.example.employee.service;
 
+import com.example.employee.exception.DepartmentNotFoundException;
 import com.example.employee.exception.EmployeeNotFoundException;
 import com.example.employee.model.Employee;
 import com.example.employee.repository.EmployeeRepository;
@@ -115,5 +116,45 @@ class EmployeeServiceTest {
         assertThat(result.id()).isEqualTo(2L);
         assertThat(result.firstName()).isEqualTo("Bob");
         verify(repository, times(1)).save(input);
+    }
+
+    // -------------------------------------------------------------------------
+    // getEmployeesByDepartment()
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("getEmployeesByDepartment() should return matching employees")
+    void getEmployeesByDepartment_shouldReturnMatchingEmployees() {
+        when(repository.findByDepartment("Engineering")).thenReturn(List.of(sampleEmployee));
+
+        List<Employee> result = service.getEmployeesByDepartment("Engineering");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).department()).isEqualTo("Engineering");
+        verify(repository, times(1)).findByDepartment("Engineering");
+    }
+
+    @Test
+    @DisplayName("getEmployeesByDepartment() should delegate the exact string to the repository (case handled there)")
+    void getEmployeesByDepartment_shouldPassDepartmentStringToRepository() {
+        // The service delegates the raw string to the repository, which handles case-insensitivity
+        when(repository.findByDepartment("engineering")).thenReturn(List.of(sampleEmployee));
+
+        List<Employee> result = service.getEmployeesByDepartment("engineering");
+
+        assertThat(result).isNotEmpty();
+        verify(repository, times(1)).findByDepartment("engineering");
+    }
+
+    @Test
+    @DisplayName("getEmployeesByDepartment() should throw DepartmentNotFoundException when no employees found")
+    void getEmployeesByDepartment_shouldThrowExceptionWhenNoneFound() {
+        when(repository.findByDepartment("Nonexistent")).thenReturn(List.of());
+
+        assertThatThrownBy(() -> service.getEmployeesByDepartment("Nonexistent"))
+                .isInstanceOf(DepartmentNotFoundException.class)
+                .hasMessageContaining("Nonexistent");
+
+        verify(repository, times(1)).findByDepartment("Nonexistent");
     }
 }

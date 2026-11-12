@@ -82,6 +82,22 @@ public class EmployeeRepository {
     }
 
     /**
+     * Finds all employees belonging to a specific department.
+     *
+     * <p>The comparison is <strong>case-insensitive</strong> so that
+     * "engineering", "Engineering", and "ENGINEERING" all return the same
+     * results — consistent with how most real databases behave.</p>
+     *
+     * @param department The department name to search for.
+     * @return A list of employees in that department (never null, may be empty).
+     */
+    public List<Employee> findByDepartment(String department) {
+        return store.values().stream()
+                .filter(emp -> emp.department().equalsIgnoreCase(department))
+                .toList();
+    }
+
+    /**
      * Returns the total number of employees currently stored.
      *
      * @return employee count.

@@ -53,6 +53,31 @@ public class EmployeeController {
     }
 
     // -------------------------------------------------------------------------
+    // GET /employees/department/{department}
+    // -------------------------------------------------------------------------
+
+    /**
+     * Retrieves all employees belonging to the specified department.
+     *
+     * <p>The department name is <strong>case-insensitive</strong>, so
+     * {@code /employees/department/engineering} and
+     * {@code /employees/department/Engineering} return the same results.</p>
+     *
+     * <p>Example request:</p>
+     * <pre>GET http://localhost:8080/employees/department/Engineering</pre>
+     *
+     * @param department The department name from the URL path.
+     * @return 200 OK with the list of matching employees, or 404 Not Found
+     *         if no employees exist in that department.
+     */
+    @GetMapping("/department/{department}")
+    public ResponseEntity<List<Employee>> getEmployeesByDepartment(
+            @PathVariable String department) {
+        List<Employee> employees = employeeService.getEmployeesByDepartment(department);
+        return ResponseEntity.ok(employees);
+    }
+
+    // -------------------------------------------------------------------------
     // GET /employees/{id}
     // -------------------------------------------------------------------------
 
@@ -101,3 +126,4 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 }
+
