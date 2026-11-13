@@ -9,6 +9,12 @@ pipeline {
     // Global environment variables available to every stage
     // -------------------------------------------------------------------------
     environment {
+        // --- Java 21 location (Eclipse JustJ JRE bundled with Eclipse IDE) ---
+        // Setting JAVA_HOME and prepending its bin directory to PATH ensures
+        // that gradlew.bat can find java.exe / javac.exe on this Windows agent.
+        JAVA_HOME = 'C:\\Users\\krish\\.p2\\pool\\plugins\\org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.9.v20251105-0741\\jre'
+        PATH      = "${JAVA_HOME}\\bin;${env.PATH}"
+
         // Ensures Gradle does not prompt for user input during the build
         GRADLE_OPTS = '-Dorg.gradle.daemon=false'
     }
@@ -44,9 +50,11 @@ pipeline {
             }
             post {
                 always {
-                    // Publish JUnit XML results so Jenkins shows a test trend graph
+                    // Publish JUnit XML results so Jenkins shows a test trend graph.
+                    // allowEmptyResults: true prevents a secondary pipeline error when
+                    // the test stage itself failed before producing any XML reports.
                     junit testResults: 'build/reports/tests/test/**/*.xml',
-                          allowEmptyResults: false
+                          allowEmptyResults: true
                 }
             }
         }
