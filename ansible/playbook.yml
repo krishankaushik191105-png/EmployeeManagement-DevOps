@@ -1,0 +1,12 @@
+---
+- name: Deploy Employee Management API
+  hosts: local
+
+  vars:
+    app_name: employee-api
+    app_port: 8080
+    jar_source: /mnt/c/Users/krish/OneDrive/Desktop/employee/build/libs/employee-management-api-1.0.0.jar
+    app_directory: /home/krish/employee-api
+
+  roles:
+    - employee

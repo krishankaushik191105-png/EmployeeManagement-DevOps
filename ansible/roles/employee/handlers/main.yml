@@ -1,0 +1,4 @@
+---
+- name: Restart Employee API
+  shell: |
+    nohup java -jar /home/krish/employee-api/app.jar > /home/krish/employee-api/app.log 2>&1 < /dev/null &
