@@ -1,0 +1,29 @@
+# Exclude everything by default, then whitelist only what Docker needs.
+# This keeps the build context small and prevents secrets/IDE files
+# from being accidentally sent to the Docker daemon.
+
+# Gradle internals and local caches
+.gradle/
+gradle/
+
+# Source code and test files (not needed — we copy the pre-built JAR)
+src/
+
+# Build output EXCEPT the libs folder (which has the JAR we need)
+build/
+!build/libs/
+!build/libs/employee-management-api-1.0.0.jar
+
+# Git and IDE metadata
+.git/
+.gitignore
+.vscode/
+.idea/
+*.iml
+
+# CI/CD and documentation
+Jenkinsfile
+README.md
+
+# Windows scripts (not needed inside the Linux container)
+gradlew.bat
